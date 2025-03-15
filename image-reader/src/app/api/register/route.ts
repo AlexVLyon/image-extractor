@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
+import prisma from "@/lib/prismaClient";
 
 
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
     const { email, password, name } = await req.json();

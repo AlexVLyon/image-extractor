@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prismaClient";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+
 
 export async function POST(req: Request) {
   try {
@@ -20,9 +20,18 @@ export async function POST(req: Request) {
 
     const userEmail = session.user.email;
 
+    if(!userEmail) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const foundUser = await prisma.user.findUnique({
       where: { email: userEmail },
     });
+
+
+    if(!foundUser) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     const newTextRecord = await prisma.textRecord.create({
       data: { text, userId: foundUser.id },
@@ -44,6 +53,10 @@ export async function GET() {
     }
 
     const userEmail =  session.user.email;
+
+    if(!userEmail) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     const foundUser = await prisma.user.findUnique({
       where: { email: userEmail },
