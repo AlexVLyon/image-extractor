@@ -1,12 +1,14 @@
 "use client"; // Required for Next.js (since this is browser-side code)
 import { useState, useEffect, useRef } from "react";
 import Tesseract from "tesseract.js";
-import { Button, Container, Paper, Typography, Box } from "@mui/material";
+import { Button, Container, Paper, Typography, Box, Snackbar } from "@mui/material";
 
 const CameraReader = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [recognizedText, setRecognizedText] = useState("");
+
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const sendTextToAPI = async (text: string) => {
         try {
@@ -24,9 +26,14 @@ const CameraReader = () => {
 
             const data = await response.json();
             console.log("Text successfully sent to API:", data);
+            setOpenSnackbar(true);
         } catch (error) {
             console.error("Error sending text to API:", error);
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
     };
 
     useEffect(() => {
@@ -76,6 +83,12 @@ const CameraReader = () => {
                     </Typography>
                 </Paper>
             </Box>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={2000} // Snackbar will auto-hide after 2 seconds
+                onClose={handleCloseSnackbar}
+                message="Text successfully sent to API"
+            />
         </Container>
     );
 };
