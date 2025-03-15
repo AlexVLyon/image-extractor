@@ -1,7 +1,7 @@
 "use client"
 import Link from 'next/link';
 import React from 'react';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
@@ -26,7 +26,9 @@ const Navbar: React.FC = () => {
                     <Button color="inherit" onClick={() => signOut()}>Logout</Button>
                 ) : (
                     <Box>
-                        <Button color="inherit" onClick={() => signIn()}>Login</Button>
+                        <Link href="/sign-in" passHref>
+                            <Button color="inherit">Login</Button>
+                        </Link>
                         <Link href="/registration" passHref>
                             <Button color="inherit">Register</Button>
                         </Link>

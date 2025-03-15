@@ -14,11 +14,6 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     const router = useRouter();
     const currentRoute = usePathname();
 
-    console.log("Session:", session);
-    console.log("Status:", status);
-    console.log("Current route:", currentRoute)
-
-
     useEffect(() => {
         if (status !== "loading" && !session && currentRoute !== "/sign-in" && currentRoute !== "/registration") {
             router.push("/sign-in"); // Client-side redirect

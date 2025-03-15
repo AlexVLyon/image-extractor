@@ -41,7 +41,6 @@ const SavedTexts: React.FC = () => {
 
     return (
         <>
-            <h1>Saved Texts</h1>
             <SavedTextsList savedTexts={texts} />
         </>
     );
