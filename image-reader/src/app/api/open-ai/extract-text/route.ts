@@ -12,11 +12,11 @@ export async function POST(req: NextRequest) {
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-4-turbo",
             messages: [{
                 role: "user",
                 content: [
-                    { type: "text", text: "what's in this image?" },
+                    { type: "text", text: "Extract and return only the text from the image. Do not provide a description or any additional details.?" },
                     {
                         type: "image_url",
                         image_url: {
