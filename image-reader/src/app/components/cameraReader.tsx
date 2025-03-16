@@ -68,7 +68,7 @@ const CameraReader = () => {
     return (
         <Container maxWidth="sm">
             <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
-                <video ref={videoRef} autoPlay style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} />
+                <video ref={videoRef} autoPlay playsInline style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} />
                 <canvas ref={canvasRef} style={{ display: 'none' }} />
                 <Button variant="contained" color="primary" onClick={captureFrame}>
                     Capture & Recognize Text
