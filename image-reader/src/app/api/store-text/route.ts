@@ -8,7 +8,7 @@ import { authOptions } from "@/lib/auth";
 export async function POST(req: Request) {
   try {
     // Store text in database
-    const { text } = await req.json();
+    const { text, readerType } = await req.json();
 
 
     // Retrieve the logged-in user's email from the session
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     const newTextRecord = await prisma.textRecord.create({
-      data: { text, userId: foundUser.id },
+      data: { text, userId: foundUser.id, readerType  },
     });
 
     return NextResponse.json({ success: true, record: newTextRecord });

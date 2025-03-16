@@ -33,15 +33,18 @@ const SavedTextList: React.FC<SavedTextListProps> = ({ savedTexts }) => {
                             primaryTypographyProps={{ style: { color: 'white' } }}
                             secondaryTypographyProps={{ style: { color: 'white' } }}
                         />
+                        <Typography variant="body2" style={{ color: 'white' }}>
+                            Reader: {savedText.readerType}
+                        </Typography>
                     </ListItemButton>
                 ))}
             </List>
             {selectedText && (
-                    <SavedTextViewModal
-                        show={Boolean(selectedText)}
-                        onHide={() => setSelectedText(null)}
-                        textRecord={selectedText}
-                    />
+                <SavedTextViewModal
+                    show={Boolean(selectedText)}
+                    onHide={() => setSelectedText(null)}
+                    textRecord={selectedText}
+                />
             )}
         </div>
     );
