@@ -56,6 +56,21 @@ const CameraReader = () => {
 
     const captureFrame = () => {
         setReaderType("tesseract");
+
+        const canvas = getCanvas();
+        if(!canvas) {
+            console.error("No canvas found");
+            return;
+        }
+
+            // Convert to text with Tesseract
+            Tesseract.recognize(canvas, "eng").then(({ data: { text } }) => {
+                setRecognizedText(text);
+            });
+        
+    };
+
+    const getCanvas = () => {
         const video = videoRef.current;
         const canvas = canvasRef.current;
         if (video && canvas) {
@@ -63,13 +78,10 @@ const CameraReader = () => {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Convert to text with Tesseract
-            Tesseract.recognize(canvas, "eng").then(({ data: { text } }) => {
-                setRecognizedText(text);
-            });
+            return canvas;
         }
-    };
+        return
+    }
     
 
 
@@ -77,7 +89,9 @@ const CameraReader = () => {
         try {
             setReaderType("openai");
 
-            const image = canvasRef.current?.toDataURL("image/jpeg");
+            // const image = canvasRef.current?.toDataURL("image/jpeg");
+            const fetchedCanvas = getCanvas();
+            const image = fetchedCanvas?.toDataURL("image/jpeg");
 
             if (!image) {
                 console.error("No image found in canvas");
