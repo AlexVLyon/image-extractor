@@ -4,10 +4,10 @@ import SavedTextViewModal from './savedTextViewModal';
 import { List, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 interface SavedTextListProps {
-    savedTexts: TextRecord[];
+    savedReceipts: TextRecord[];
 }
 
-const SavedTextList: React.FC<SavedTextListProps> = ({ savedTexts }) => {
+const SavedTextList: React.FC<SavedTextListProps> = ({ savedReceipts }) => {
     const [selectedText, setSelectedText] = useState<TextRecord | null>(null);
 
     return (
@@ -16,7 +16,7 @@ const SavedTextList: React.FC<SavedTextListProps> = ({ savedTexts }) => {
                 Saved Texts
             </Typography>
             <List>
-                {savedTexts.map((savedText) => (
+                {savedReceipts.map((savedText) => (
                     <ListItemButton
                         key={savedText.id}
                         onClick={() => setSelectedText(savedText)}

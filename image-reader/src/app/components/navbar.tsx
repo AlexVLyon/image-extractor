@@ -21,6 +21,12 @@ const Navbar: React.FC = () => {
                     <Link href="/saved-texts" passHref>
                         <Button color="inherit">Saved Text</Button>
                     </Link>
+                    <Link href="/receipt-reader" passHref>
+                        <Button color="inherit">Receipt</Button>
+                    </Link>
+                    <Link href="/saved-receipts" passHref>
+                        <Button color="inherit">Saved Receipts</Button>
+                    </Link>
                 </Typography>
                 {session ? (
                     <Button color="inherit" onClick={() => signOut()}>Logout</Button>

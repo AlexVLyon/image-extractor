@@ -15,6 +15,28 @@ model TextRecord {
   createdAt DateTime @default(now())
 }
 
+model Receipt {
+  id         String        @id @default(uuid())
+  storeName  String?
+  totalSum   Float?
+  createdAt  DateTime      @default(now())
+  currency   String?
+  userId    String?
+
+  items      ReceiptItem[]
+}
+
+model ReceiptItem {
+  id         String   @id @default(uuid())
+  itemName   String?
+  price      Float? 
+  createdAt  DateTime @default(now())
+
+  receiptId  String
+  receipt    Receipt  @relation(fields: [receiptId], references: [id])
+}
+
+
 model User {
   id    String  @id @default(uuid())
   name  String?
