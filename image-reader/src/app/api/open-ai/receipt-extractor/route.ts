@@ -49,9 +49,15 @@ export async function GET() {
 
 function parseReceipt(text: string): ReceiptBase {
     try {
-        console.log("test before parsing", text)
-        const parsed = JSON.parse(text);
-        console.log("test after parsing", parsed)
+        console.log("text before parsing", text)
+        const cleanedText = text.replace(/^```json\s*/, '').replace(/```$/, '');
+
+        console.log("text after cleaning", cleanedText)
+
+        const parsed = JSON.parse(cleanedText);
+
+
+        console.log("text after parsing", parsed)
 
         return {
             // id: "some-uuid",
