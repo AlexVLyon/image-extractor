@@ -49,28 +49,23 @@ export async function GET() {
 
 function parseReceipt(text: string): ReceiptBase {
     try {
-        console.log("text before parsing", text)
+        console.log("text before parsing", text);
         const cleanedText = text.replace(/^```json\s*/, '').replace(/```$/, '');
 
-        console.log("text after cleaning", cleanedText)
+        console.log("text after cleaning", cleanedText);
 
         const parsed = JSON.parse(cleanedText);
 
-
-        console.log("text after parsing", parsed)
+        console.log("text after parsing", parsed);
 
         return {
-            // id: "some-uuid",
-            storeName: parsed?.storeName || "Unknown Store",
-            totalSum: parsed?.totalSum || 0,
+            storeName: parsed?.store_name || "Unknown Store",
+            totalSum: parsed?.total_sum || 0,
             currency: parsed?.currency || "NOK",
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             items: parsed.items.map((item: any) => ({
-                // id: "item-uuid",
                 itemName: item?.name || "Unknown Item",
                 price: item?.price || 0,
                 createdAt: new Date(),
-                // receiptId: "some-uuid",
             })),
         };
     } catch (error) {

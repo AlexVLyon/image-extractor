@@ -17,8 +17,10 @@ const SavedReceipts: React.FC = () => {
                 if (!response.ok || !response.body) {
                     throw new Error('Failed to fetch receipts');
                 }
+
                 const result = await response.json();
-                const data: Receipt[] = result.records;
+
+                const data: Receipt[] = result;
 
                 setReceipts(data);
             } catch (err) {

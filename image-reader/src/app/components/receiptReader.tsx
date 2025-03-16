@@ -4,12 +4,14 @@ import { Button, Container, Paper, Typography, Box, Snackbar } from "@mui/materi
 import { Receipt } from "../../../types/receipt";
 import ReceiptCard from "./receiptCard";
 
-const CameraReader = () => {
+const ReceiptReader = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [receiptFound, setReceiptFound] = useState<Receipt | null>(null);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const  [snackBarText, setSnackBarText] = useState("");
+
+    const [loading , setLoading] = useState(false);
 
 
     const handleCloseSnackbar = () => {
@@ -19,7 +21,8 @@ const CameraReader = () => {
 
     const saveReceipt = async (receipt: Receipt) => {
         try {
-            const response = await fetch("/api/receipts", {
+            setLoading(true);
+            const response = await fetch("/api/receipt", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -28,6 +31,7 @@ const CameraReader = () => {
             });
 
             if (!response.ok) {
+                setLoading(false);
                 throw new Error("Failed to save receipt");
             }
 
@@ -35,7 +39,10 @@ const CameraReader = () => {
             console.log("Receipt saved:", data);
             setReceiptFound(data);
             setOpenSnackbar(true);
+            setSnackBarText("Receipt saved successfully");
+            setLoading(false);
         } catch (error) {
+            setLoading(false);
             console.error("Error saving receipt:", error);
         }
     };
@@ -45,7 +52,7 @@ const CameraReader = () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        facingMode: { ideal: "environment" }
+                        facingMode: { ideal: "user" }
                     }
                 });
                 if (videoRef.current) videoRef.current.srcObject = stream;
@@ -74,11 +81,13 @@ const CameraReader = () => {
 
     const extractTextFromImageUsingOpenAI = async () => {
         try {
+            setLoading(true);
             const fetchedCanvas = getCanvas();
             const image = fetchedCanvas?.toDataURL("image/jpeg");
 
             if (!image) {
                 console.error("No image found in canvas");
+                setLoading(false);
                 return;
             }
 
@@ -94,17 +103,19 @@ const CameraReader = () => {
                 // open snackbar: 
                 setSnackBarText("Error extracting receipt from image");
                 setOpenSnackbar(true);
+                setLoading(false);
                 throw new Error("Failed to extract receipt from image");
-
             }
 
             const data = await response.json();
             console.log("Text extracted from image:", data.text);
              setReceiptFound(data);
+             setLoading(false);
         } catch (error) {
             console.error("Error extracting receipt from image:", error);
             // open snackbar: 
             setSnackBarText("Error extracting receipt from image");
+            setLoading(false);
 
             setOpenSnackbar(true);
         }
@@ -120,6 +131,8 @@ const CameraReader = () => {
                 <Button variant="contained" color="primary" onClick={() => extractTextFromImageUsingOpenAI()}>
                     Extract Receipt using OpenAI
                 </Button>
+
+                {loading && <Typography variant="h6">Loading...</Typography>}
 
 
                 {receiptFound && (
@@ -143,4 +156,4 @@ const CameraReader = () => {
     );
 };
 
-export default CameraReader;
+export default ReceiptReader;

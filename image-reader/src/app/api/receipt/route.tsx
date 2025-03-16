@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const itemsMapped = items.map((item: any) => ({
-       name: item.name,
+       itemName: item.itemName,
        price: item.price,
     }));
 
@@ -84,7 +84,10 @@ export async function GET() {
     try {
         const receipts = await prisma.receipt.findMany({
             where: { userId: foundUser.id },
+            include: { items: true },
         });
+
+        console.log("receipts", receipts);
         return NextResponse.json(receipts, { status: 200 });
     } catch {
         return NextResponse.json({ error: 'Error retrieving receipts' }, { status: 500 });
