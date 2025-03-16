@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"; // Required for Next.js (since this is browser-side code)
 import { useState, useEffect, useRef } from "react";
 import Tesseract from "tesseract.js";

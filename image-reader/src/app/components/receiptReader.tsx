@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"; // Required for Next.js (since this is browser-side code)
 import { useState, useEffect, useRef } from "react";
 import { Button, Container, Paper, Typography, Box, Snackbar, IconButton } from "@mui/material";
@@ -36,7 +37,7 @@ const ReceiptReader = () => {
 
             const data = await response.json();
             console.log("Receipt saved:", data);
-            setReceiptFound(data);
+            // setReceiptFound(data);
             setOpenSnackbar(true);
             setSnackBarText("Receipt saved successfully");
             setLoading(false);
