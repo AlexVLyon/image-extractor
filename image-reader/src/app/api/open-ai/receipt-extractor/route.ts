@@ -17,7 +17,13 @@ export async function POST(req: NextRequest) {
             messages: [{
             role: "user",
             content: [
-                { type: "text", text: "Extract and return the receipt details in a JSON structure. The JSON should include store name, total sum, currency, and items with their names and prices. Ensure the items are in a structured manner every time. Do not provide a description or any additional details." },
+                { 
+                type: "text", 
+                text: "Extract and return the receipt details in a JSON structure. " +
+                      "The JSON should include store name, total sum, currency, and items " +
+                      "with their names and prices. Ensure the items are in a structured " +
+                      "manner every time. Do not provide a description or any additional details." 
+                },
                 {
                 type: "image_url",
                 image_url: {

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
             messages: [{
                 role: "user",
                 content: [
-                    { type: "text", text: "Extract and return only the text from the image. Do not provide a description or any additional details.?" },
+                    { type: "text", text: "Extract and return only the text from the image. Do not provide a description or any additional details." },
                     {
                         type: "image_url",
                         image_url: {

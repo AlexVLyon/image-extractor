@@ -20,6 +20,7 @@
     "next": "15.2.2",
     "next-auth": "^4.24.11",
     "openai": "^4.87.3",
+    "perplexity": "^1.0.1",
     "pg": "^8.14.0",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
