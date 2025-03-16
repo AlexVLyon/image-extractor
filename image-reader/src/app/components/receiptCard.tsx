@@ -16,11 +16,13 @@ const ReceiptCard: React.FC<ReceiptCardProps> = ({ receipt }) => {
         setIsCollapsed(!isCollapsed);
     };
 
+    const totalSum = receipt?.totalSum ? parseFloat(receipt.totalSum.toString()) : 0;
+
     return (
         <Card className="receipt-card">
             <CardHeader
                 title={`Receipt ${receipt.storeName ? `from ${receipt.storeName}` : ''}`}
-                subheader={`Total: ${receipt.totalSum ? receipt.totalSum.toFixed(2) : '0.00'} ${receipt.currency}`}
+                subheader={`Total: ${totalSum.toFixed(2)} ${receipt.currency}`}
                 action={
                     <IconButton onClick={toggleCollapse}>
                         {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
@@ -31,8 +33,8 @@ const ReceiptCard: React.FC<ReceiptCardProps> = ({ receipt }) => {
                 <CardContent style={{ overflow: 'auto', maxHeight: '400px' }}>
                     <Typography variant="h6">Items:</Typography>
                     <List>
-                        {receipt.items.map(item => (
-                            <ListItem key={item.id}>
+                        {receipt.items.map((item, index) => (
+                            <ListItem key={`${item.id ?? item.itemName} (${index})`}>
                                 {item.itemName} - {item.price ? item.price.toFixed(2) : '0.00'} {receipt.currency}
                             </ListItem>
                         ))}

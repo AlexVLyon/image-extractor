@@ -29,9 +29,6 @@ export async function POST(req: NextRequest) {
         });
 
         const extractedText = completion.choices?.[0]?.message?.content || "No text found.";
-        
-        // Here you would parse the extractedText to map it to the Receipt and ReceiptItem structure
-        // This is a simplified example and assumes the extracted text is in a structured format
         const receipt = parseReceipt(extractedText);
 
         console.log("Extracted receipt:", receipt);
