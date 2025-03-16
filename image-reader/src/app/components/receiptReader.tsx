@@ -1,23 +1,22 @@
 "use client"; // Required for Next.js (since this is browser-side code)
 import { useState, useEffect, useRef } from "react";
-import { Button, Container, Paper, Typography, Box, Snackbar } from "@mui/material";
+import { Button, Container, Paper, Typography, Box, Snackbar, IconButton } from "@mui/material";
 import { Receipt } from "../../../types/receipt";
 import ReceiptCard from "./receiptCard";
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 const ReceiptReader = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [receiptFound, setReceiptFound] = useState<Receipt | null>(null);
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    const  [snackBarText, setSnackBarText] = useState("");
-
-    const [loading , setLoading] = useState(false);
-
+    const [snackBarText, setSnackBarText] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
 
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
-
 
     const saveReceipt = async (receipt: Receipt) => {
         try {
@@ -47,22 +46,22 @@ const ReceiptReader = () => {
         }
     };
 
-    useEffect(() => {
-        const startCamera = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: { ideal: "user" }
-                    }
-                });
-                if (videoRef.current) videoRef.current.srcObject = stream;
-            } catch (error) {
-                console.error("Error accessing camera:", error);
-            }
-        };
+    const startCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: { ideal: facingMode }
+                }
+            });
+            if (videoRef.current) videoRef.current.srcObject = stream;
+        } catch (error) {
+            console.error("Error accessing camera:", error);
+        }
+    };
 
+    useEffect(() => {
         startCamera();
-    }, []);
+    }, [facingMode]);
 
     const getCanvas = () => {
         const video = videoRef.current;
@@ -74,10 +73,8 @@ const ReceiptReader = () => {
             ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
             return canvas;
         }
-        return
-    }
-    
-
+        return;
+    };
 
     const extractTextFromImageUsingOpenAI = async () => {
         try {
@@ -100,7 +97,6 @@ const ReceiptReader = () => {
             });
 
             if (!response.ok) {
-                // open snackbar: 
                 setSnackBarText("Error extracting receipt from image");
                 setOpenSnackbar(true);
                 setLoading(false);
@@ -109,31 +105,36 @@ const ReceiptReader = () => {
 
             const data = await response.json();
             console.log("Text extracted from image:", data.text);
-             setReceiptFound(data);
-             setLoading(false);
+            setReceiptFound(data);
+            setLoading(false);
         } catch (error) {
             console.error("Error extracting receipt from image:", error);
-            // open snackbar: 
             setSnackBarText("Error extracting receipt from image");
             setLoading(false);
-
             setOpenSnackbar(true);
         }
-    }
+    };
 
-
+    const switchCamera = () => {
+        setFacingMode((prevMode) => (prevMode === "user" ? "environment" : "user"));
+    };
 
     return (
         <Container maxWidth="sm">
             <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+            <IconButton color="primary" onClick={switchCamera}>
+                    <SwapHorizIcon />
+                </IconButton>
+                <Typography variant="body1">
+                    Current Camera: {facingMode === "user" ? "Front" : "Back"}
+                </Typography>
                 <video ref={videoRef} autoPlay playsInline style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} />
                 <canvas ref={canvasRef} style={{ display: 'none' }} />
-                <Button variant="contained" color="primary" onClick={() => extractTextFromImageUsingOpenAI()}>
+                <Button variant="contained" color="primary" onClick={extractTextFromImageUsingOpenAI}>
                     Extract Receipt using OpenAI
                 </Button>
 
                 {loading && <Typography variant="h6">Loading...</Typography>}
-
 
                 {receiptFound && (
                     <Paper elevation={3} style={{ padding: '16px', width: '100%' }}>
@@ -152,7 +153,6 @@ const ReceiptReader = () => {
                 message={snackBarText}
             />
         </Container>
-
     );
 };
 

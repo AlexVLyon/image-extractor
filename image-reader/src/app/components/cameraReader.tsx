@@ -1,7 +1,8 @@
 "use client"; // Required for Next.js (since this is browser-side code)
 import { useState, useEffect, useRef } from "react";
 import Tesseract from "tesseract.js";
-import { Button, Container, Paper, Typography, Box, Snackbar } from "@mui/material";
+import { Button, Container, Paper, Typography, Box, Snackbar, IconButton } from "@mui/material";
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 const CameraReader = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -10,6 +11,7 @@ const CameraReader = () => {
 
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [readerType, setReaderType] = useState("tesseract");
+    const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
 
     const sendTextToAPI = async (text: string) => {
         try {
@@ -37,22 +39,22 @@ const CameraReader = () => {
         setOpenSnackbar(false);
     };
 
-    useEffect(() => {
-        const startCamera = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: { ideal: "environment" }
-                    }
-                });
-                if (videoRef.current) videoRef.current.srcObject = stream;
-            } catch (error) {
-                console.error("Error accessing camera:", error);
-            }
-        };
+    const startCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: { ideal: facingMode }
+                }
+            });
+            if (videoRef.current) videoRef.current.srcObject = stream;
+        } catch (error) {
+            console.error("Error accessing camera:", error);
+        }
+    };
 
+    useEffect(() => {
         startCamera();
-    }, []);
+    }, [facingMode]);
 
     const captureFrame = () => {
         setReaderType("tesseract");
@@ -63,11 +65,10 @@ const CameraReader = () => {
             return;
         }
 
-            // Convert to text with Tesseract
-            Tesseract.recognize(canvas, "eng").then(({ data: { text } }) => {
-                setRecognizedText(text);
-            });
-        
+        // Convert to text with Tesseract
+        Tesseract.recognize(canvas, "eng").then(({ data: { text } }) => {
+            setRecognizedText(text);
+        });
     };
 
     const getCanvas = () => {
@@ -80,16 +81,13 @@ const CameraReader = () => {
             ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
             return canvas;
         }
-        return
+        return;
     }
-    
-
 
     const extractTextFromImageUsingOpenAI = async () => {
         try {
             setReaderType("openai");
 
-            // const image = canvasRef.current?.toDataURL("image/jpeg");
             const fetchedCanvas = getCanvas();
             const image = fetchedCanvas?.toDataURL("image/jpeg");
 
@@ -118,11 +116,19 @@ const CameraReader = () => {
         }
     }
 
-
+    const toggleFacingMode = () => {
+        setFacingMode((prevMode) => (prevMode === "user" ? "environment" : "user"));
+    };
 
     return (
         <Container maxWidth="sm">
             <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+                <IconButton color="primary" onClick={toggleFacingMode}>
+                    <SwapHorizIcon />
+                </IconButton>
+                <Typography variant="body1">
+                    Current Camera: {facingMode === "user" ? "Front" : "Back"}
+                </Typography>
                 <video ref={videoRef} autoPlay playsInline style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} />
                 <canvas ref={canvasRef} style={{ display: 'none' }} />
                 <Button variant="contained" color="primary" onClick={captureFrame}>
@@ -134,6 +140,10 @@ const CameraReader = () => {
                 <Button variant="contained" color="secondary" onClick={() => sendTextToAPI(recognizedText)}>
                     Save
                 </Button>
+
+                {/* <Typography variant="body1">
+                    Current Reader: {readerType === "tesseract" ? "Tesseract" : "OpenAI"}
+                </Typography> */}
 
                 <Paper elevation={3} style={{ padding: '16px', width: '100%' }}>
                     <Typography variant="h6">Recognized Text:</Typography>
@@ -149,7 +159,6 @@ const CameraReader = () => {
                 message="Text successfully sent to API"
             />
         </Container>
-
     );
 };
 
