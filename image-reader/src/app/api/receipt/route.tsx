@@ -1,13 +1,14 @@
-import { NextApiRequest } from 'next';
 import { NextResponse } from 'next/server';
-import { ReceiptBase } from '../../../../types/receipt';
 import prisma from "@/lib/prismaClient";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from '@/lib/auth';
 
 
-export async function POST(req: NextApiRequest) {
+export async function POST(req: Request) {
+
+
+    const { storeName, totalSum, currency, items } = await req.json();
 
     // Current user:
      // Retrieve the logged-in user's email from the session
@@ -33,20 +34,24 @@ export async function POST(req: NextApiRequest) {
      }
 
 
-    const receiptBase: ReceiptBase = {
-        storeName: req.body.storeName,
-        totalSum: req.body.totalSum,
-        currency: req.body.currency,
-        items: req.body.items,
-        userId : foundUser.id
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const itemsMapped = items.map((item: any) => ({
+       name: item.name,
+       price: item.price,
+    }));
 
     try {
-        const receipt = await prisma.receipt.create({
-            data: {
-                ...receiptBase
-            },
-        });
+       const receipt = await prisma.receipt.create({
+          data: {
+             storeName: storeName ?? "Unknown",
+             totalSum: totalSum ?? 0,
+             currency: currency ?? "NOK",
+             userId: foundUser.id,
+             items: {
+                create: itemsMapped
+             }
+          },
+       });
 
         return NextResponse.json(receipt, { status: 201 });
     } catch {
@@ -54,7 +59,7 @@ export async function POST(req: NextApiRequest) {
     }
 }
 
-export async function GET(req: NextApiRequest) {
+export async function GET() {
     // Current user:
     const session = await getServerSession(authOptions);
 
