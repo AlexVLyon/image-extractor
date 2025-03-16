@@ -62,6 +62,7 @@ function parseReceipt(text: string): ReceiptBase {
             storeName: parsed?.store_name || "Unknown Store",
             totalSum: parsed?.total_sum || 0,
             currency: parsed?.currency || "NOK",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             items: parsed.items.map((item: any) => ({
                 itemName: item?.name || "Unknown Item",
                 price: item?.price || 0,
