@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"; // Required for Next.js (since this is browser-side code)
 import React, { useState, useEffect, useRef } from "react";
-import { useTorchLight } from "@blackbox-vision/use-torch-light";
 import Tesseract from "tesseract.js";
 import { Button, Container, Paper, Typography, Box, Snackbar, IconButton } from "@mui/material";
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
@@ -13,8 +12,6 @@ const CameraReader = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [readerType, setReaderType] = useState("tesseract");
     const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
-
-    const [on, toggleTorch] = useTorchLight(videoRef.current?.srcObject as MediaStream);
 
     const sendTextToAPI = async (text: string) => {
         try {
@@ -142,9 +139,6 @@ const CameraReader = () => {
                 </Button>
                 <Button variant="contained" color="secondary" onClick={() => sendTextToAPI(recognizedText)}>
                     Save
-                </Button>
-                <Button variant="contained" onClick={toggleTorch}>
-                    {on ? "Disable Torch" : "Enable Torch"}
                 </Button>
                 <Paper elevation={3} style={{ padding: '16px', width: '100%' }}>
                     <Typography variant="h6">Recognized Text:</Typography>
