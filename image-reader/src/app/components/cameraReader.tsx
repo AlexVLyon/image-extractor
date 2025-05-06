@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"; // Required for Next.js (since this is browser-side code)
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useTorchLight } from "@blackbox-vision/use-torch-light";
 import Tesseract from "tesseract.js";
 import { Button, Container, Paper, Typography, Box, Snackbar, IconButton } from "@mui/material";
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
@@ -9,10 +10,11 @@ const CameraReader = () => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [recognizedText, setRecognizedText] = useState("");
-
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [readerType, setReaderType] = useState("tesseract");
     const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+
+    const [on, toggleTorch] = useTorchLight(videoRef.current?.srcObject as MediaStream);
 
     const sendTextToAPI = async (text: string) => {
         try {
@@ -61,7 +63,7 @@ const CameraReader = () => {
         setReaderType("tesseract");
 
         const canvas = getCanvas();
-        if(!canvas) {
+        if (!canvas) {
             console.error("No canvas found");
             return;
         }
@@ -83,7 +85,7 @@ const CameraReader = () => {
             return canvas;
         }
         return;
-    }
+    };
 
     const extractTextFromImageUsingOpenAI = async () => {
         try {
@@ -115,7 +117,7 @@ const CameraReader = () => {
         } catch (error) {
             console.error("Error extracting text from image:", error);
         }
-    }
+    };
 
     const toggleFacingMode = () => {
         setFacingMode((prevMode) => (prevMode === "user" ? "environment" : "user"));
@@ -141,11 +143,9 @@ const CameraReader = () => {
                 <Button variant="contained" color="secondary" onClick={() => sendTextToAPI(recognizedText)}>
                     Save
                 </Button>
-
-                {/* <Typography variant="body1">
-                    Current Reader: {readerType === "tesseract" ? "Tesseract" : "OpenAI"}
-                </Typography> */}
-
+                <Button variant="contained" onClick={toggleTorch}>
+                    {on ? "Disable Torch" : "Enable Torch"}
+                </Button>
                 <Paper elevation={3} style={{ padding: '16px', width: '100%' }}>
                     <Typography variant="h6">Recognized Text:</Typography>
                     <Typography variant="body1" color="textSecondary">

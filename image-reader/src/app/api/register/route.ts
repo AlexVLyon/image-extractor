@@ -12,6 +12,7 @@ export async function POST(req: Request) {
     const hashedPassword = await hash(password, 10);
 
     try {
+         
         const user = await prisma.user.create({
             data: { email, name, password: hashedPassword }
         });
@@ -21,6 +22,7 @@ export async function POST(req: Request) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
             return NextResponse.json({ error: "User already exists" }, { status: 400 });
         } else {
+            console.log(error)
             return NextResponse.json({ error: "Internal server error" }, { status: 500 });
         }
     }

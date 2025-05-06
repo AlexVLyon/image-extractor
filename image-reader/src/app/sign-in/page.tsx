@@ -22,6 +22,7 @@ const SignInPage: React.FC = () => {
         if (result?.error) {
             setError('Sign in error: ' + result.error);
         } else {
+            console.log('Sign in successful:', result);
             router.push('/');
         }
     };
